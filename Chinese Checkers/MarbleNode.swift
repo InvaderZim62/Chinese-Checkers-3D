@@ -30,7 +30,7 @@ class MarbleNode: SCNNode {
 
         physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
 //        physicsBody?.friction = 0  // 0: slippery, 1: sticky (default: 0.5)
-        physicsBody?.restitution = Constant.bounciness  // 0: inelastic, 1: perfectly elastic (default: 0.5)
+//        physicsBody?.restitution = Constant.bounciness  // 0: inelastic, 1: perfectly elastic (default: 0.5)
         physicsBody?.categoryBitMask = ContactCategory.marble
         physicsBody?.contactTestBitMask = ContactCategory.marble | ContactCategory.board
 //        physicsBody?.collisionBitMask = ContactCategory.marble | ContactCategory.board

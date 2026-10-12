@@ -24,7 +24,7 @@ class BoardNode: SCNNode {
         let options = [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron]
         physicsBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(node: boardNode, options: options))
 //        physicsBody?.friction = 1.0  // 0: slippery, 1: sticky (default: 0.5)
-        physicsBody?.restitution = 0.0  // 0: inelastic, 1: perfectly elastic (default: 0.5)
+//        physicsBody?.restitution = 0.0  // 0: inelastic, 1: perfectly elastic (default: 0.5)
         physicsBody?.categoryBitMask = ContactCategory.board
         physicsBody?.collisionBitMask = ContactCategory.marble | ContactCategory.board
 //        physicsBody?.contactTestBitMask = ContactCategory.marble | ContactCategory.board  // also added part to marble bit mask
