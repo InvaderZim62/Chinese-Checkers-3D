@@ -9,10 +9,18 @@ import UIKit
 import QuartzCore
 import SceneKit
 
+struct Constant {
+    static let nominalCameraDistance: Float = 6
+}
+
 class GameViewController: UIViewController {
+
+    lazy var scene = Scene(view: view)
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let boardNode = ContactNode(part: "board", isSoundMaking: false, isConcave: true)
+        scene.scnScene.rootNode.addChildNode(boardNode)
     }
     
     override var prefersStatusBarHidden: Bool {

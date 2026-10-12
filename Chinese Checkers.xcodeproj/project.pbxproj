@@ -13,6 +13,8 @@
 		4AA84CF3307C872100A91175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CE7307C872100A91175 /* Assets.xcassets */; };
 		4AA84CF4307C872100A91175 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CEA307C872100A91175 /* art.scnassets */; };
 		4AA84CF6307C872100A91175 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CEE307C872100A91175 /* Main.storyboard */; };
+		4AA84D01307C89BF00A91175 /* ContactNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D00307C89BF00A91175 /* ContactNode.swift */; };
+		4AA84D03307C89DE00A91175 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D02307C89DE00A91175 /* Scene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		4AA84CEB307C872100A91175 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		4AA84CEC307C872100A91175 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4AA84CED307C872100A91175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4AA84D00307C89BF00A91175 /* ContactNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactNode.swift; sourceTree = "<group>"; };
+		4AA84D02307C89DE00A91175 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,8 @@
 			children = (
 				4AA84CEE307C872100A91175 /* Main.storyboard */,
 				4AA84CEB307C872100A91175 /* GameViewController.swift */,
+				4AA84D02307C89DE00A91175 /* Scene.swift */,
+				4AA84D00307C89BF00A91175 /* ContactNode.swift */,
 				4AA84CEA307C872100A91175 /* art.scnassets */,
 				4AA84CE9307C872100A91175 /* Supporting Files */,
 				4AA84CEC307C872100A91175 /* Info.plist */,
@@ -142,6 +148,8 @@
 			files = (
 				4AA84CF0307C872100A91175 /* AppDelegate.swift in Sources */,
 				4AA84CF1307C872100A91175 /* SceneDelegate.swift in Sources */,
+				4AA84D03307C89DE00A91175 /* Scene.swift in Sources */,
+				4AA84D01307C89BF00A91175 /* ContactNode.swift in Sources */,
 				4AA84CF2307C872100A91175 /* GameViewController.swift in Sources */,
 			);
 		};
