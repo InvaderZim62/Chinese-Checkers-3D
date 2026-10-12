@@ -10,7 +10,14 @@ import QuartzCore
 import SceneKit
 
 struct Constant {
-    static let nominalCameraDistance: Float = 6
+    static let nominalCameraDistance: Float = 4
+    static let marbleRadius: CGFloat = 0.08
+    static let bounciness: CGFloat = 1.02  // 1.02 keeps energy nearly neutral
+}
+
+struct ContactCategory {  // bit masks for contact/collision detection
+    static let board = 1 << 0
+    static let marble = 1 << 1
 }
 
 class GameViewController: UIViewController {
@@ -19,8 +26,13 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let boardNode = ContactNode(part: "board", isSoundMaking: false, isConcave: true)
+        
+        let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
+        
+        let marbleNode = MarbleNode(radius: Constant.marbleRadius, color: UIColor.blue)
+        marbleNode.position = SCNVector3(x: 0, y: 1, z: 0)
+        scene.scnScene.rootNode.addChildNode(marbleNode)
     }
     
     override var prefersStatusBarHidden: Bool {

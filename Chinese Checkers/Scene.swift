@@ -1,8 +1,8 @@
 //
 //  Scene.swift
-//  DnDDice
+//  Chinese Checkers
 //
-//  Created by Phil Stern on 2/18/25.
+//  Created by Phil Stern on 10/11/26.
 //
 //  SceneKit axes
 //       y (height)
