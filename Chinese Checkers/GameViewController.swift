@@ -24,11 +24,6 @@ struct Constant {
     static let bounciness: CGFloat = 0
 }
 
-struct ContactCategory {  // bit masks for contact/collision detection
-    static let board = 1 << 0
-    static let marble = 1 << 1
-}
-
 struct RowCol: CustomStringConvertible {
     let row: Int
     let col: Int
@@ -46,7 +41,6 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        scene.scnView.delegate = self
         
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
@@ -75,14 +69,5 @@ class GameViewController: UIViewController {
         } else {
             return .all
         }
-    }
-}
-
-// MARK: - Extensions
-
-extension GameViewController: SCNSceneRendererDelegate {  // requires scnView.delegate = self
-    
-    func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        print(marbleNode.presentation.position)
     }
 }
