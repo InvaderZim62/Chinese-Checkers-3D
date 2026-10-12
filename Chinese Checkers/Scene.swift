@@ -20,27 +20,6 @@ class Scene {
     var scnScene: SCNScene!
     var scnView: SCNView!
     var cameraNode: SCNNode!
-    
-    let defaultLightNode: SCNNode = {
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light?.type = .directional
-        return lightNode
-    }()
-    
-    let extraLightNode: SCNNode = {
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light?.type = .omni
-        return lightNode
-    }()
-    
-    let torchLightNode: SCNNode = {
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light?.type = .omni
-        return lightNode
-    }()
 
     private var view: UIView!  // GameViewController's view
 
@@ -49,14 +28,6 @@ class Scene {
         setupScene()
         setupView()
         setupCamera()
-    }
-    
-    var isShowTorchLight = false {
-        didSet {
-            defaultLightNode.light?.intensity = isShowTorchLight ? 0 : 500
-            extraLightNode.light?.intensity = isShowTorchLight ? 0 : 500
-            torchLightNode.light?.intensity = isShowTorchLight ? 500 : 0
-        }
     }
 
     private func setupScene() {
@@ -77,7 +48,12 @@ class Scene {
     private func setupCamera() {
         cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
-        let cameraAngle: Float = 40 * .pi / 180  // position camera 40 degrees above horizon
+        if Constant.isOrthographicProjection {
+            // far marbles/holes same size as close, also ignores camera distance
+            cameraNode.camera?.usesOrthographicProjection = true
+            cameraNode.camera?.orthographicScale = 2.2
+        }
+        let cameraAngle: Float = 45 * .pi / 180  // position camera 40 degrees above horizon
         cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float(cameraAngle), 1, 0, 0)
         let cameraDistance = Constant.nominalCameraDistance * (2 * Float(view.bounds.width) / 375.0 - 1)  // iPhone SE is 375 wide
         cameraNode.position = SCNVector3(0, cameraDistance * sin(cameraAngle), cameraDistance * cos(cameraAngle))

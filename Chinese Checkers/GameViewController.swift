@@ -17,10 +17,11 @@ import QuartzCore
 import SceneKit
 
 struct Constant {
-    static let nominalCameraDistance: Float = 4
+    static let nominalCameraDistance: Float = 3.6
+    static let isOrthographicProjection = true
     static let marbleRadius: CGFloat = 0.08
     static let holeSpacing: Float = 0.254
-    static let marbleY: Float = 0.08
+    static let marbleHeight: Float = 0.09
     static let bounciness: CGFloat = 0
 }
 
@@ -45,7 +46,41 @@ class GameViewController: UIViewController {
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
         
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: UIColor.blue)
+        let marbleColor = UIColor.red
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 0))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 3))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 6))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 0))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 3))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 6))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 0))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
+        marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 3))
+        scene.scnScene.rootNode.addChildNode(marbleNode)
+        
+        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
         marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 6))
         scene.scnScene.rootNode.addChildNode(marbleNode)
     }
@@ -56,7 +91,7 @@ class GameViewController: UIViewController {
         let slantAngle: Float = 60.0 * .pi / 180.0
         let x = holeSpacing * ((Float(rowCol.col) - halfSize) * cos(slantAngle) - (Float(rowCol.row) - halfSize) * cos(slantAngle))
         let z = holeSpacing * ((Float(rowCol.col) - halfSize) * sin(slantAngle) + (Float(rowCol.row) - halfSize) * sin(slantAngle))
-        return SCNVector3(x: x, y: Constant.marbleY, z: z)
+        return SCNVector3(x: x, y: Constant.marbleHeight, z: z)
     }
     
     override var prefersStatusBarHidden: Bool {
