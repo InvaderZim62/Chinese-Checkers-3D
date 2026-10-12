@@ -6,30 +6,25 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4AA84CF0307C872100A91175 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84CE6307C872100A91175 /* AppDelegate.swift */; };
+		4AA84CF1307C872100A91175 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84CE8307C872100A91175 /* SceneDelegate.swift */; };
+		4AA84CF2307C872100A91175 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84CEB307C872100A91175 /* GameViewController.swift */; };
+		4AA84CF3307C872100A91175 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CE7307C872100A91175 /* Assets.xcassets */; };
+		4AA84CF4307C872100A91175 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CEA307C872100A91175 /* art.scnassets */; };
+		4AA84CF6307C872100A91175 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AA84CEE307C872100A91175 /* Main.storyboard */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4AA84CCE307C86A900A91175 /* Chinese Checkers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chinese Checkers.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AA84CE6307C872100A91175 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4AA84CE7307C872100A91175 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4AA84CE8307C872100A91175 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4AA84CEA307C872100A91175 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		4AA84CEB307C872100A91175 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		4AA84CEC307C872100A91175 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4AA84CED307C872100A91175 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4AA84CDF307C86AB00A91175 /* Exceptions for "Chinese Checkers" folder in "Chinese Checkers" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 4AA84CCD307C86A900A91175 /* Chinese Checkers */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		4AA84CD0307C86A900A91175 /* Chinese Checkers */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				4AA84CDF307C86AB00A91175 /* Exceptions for "Chinese Checkers" folder in "Chinese Checkers" target */,
-			);
-			path = "Chinese Checkers";
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4AA84CCB307C86A900A91175 /* Frameworks */ = {
@@ -43,7 +38,7 @@
 		4AA84CC5307C86A900A91175 = {
 			isa = PBXGroup;
 			children = (
-				4AA84CD0307C86A900A91175 /* Chinese Checkers */,
+				4AA84CEF307C872100A91175 /* Chinese Checkers */,
 				4AA84CCF307C86A900A91175 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +49,28 @@
 				4AA84CCE307C86A900A91175 /* Chinese Checkers.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4AA84CE9307C872100A91175 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4AA84CE6307C872100A91175 /* AppDelegate.swift */,
+				4AA84CE8307C872100A91175 /* SceneDelegate.swift */,
+				4AA84CE7307C872100A91175 /* Assets.xcassets */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4AA84CEF307C872100A91175 /* Chinese Checkers */ = {
+			isa = PBXGroup;
+			children = (
+				4AA84CEE307C872100A91175 /* Main.storyboard */,
+				4AA84CEB307C872100A91175 /* GameViewController.swift */,
+				4AA84CEA307C872100A91175 /* art.scnassets */,
+				4AA84CE9307C872100A91175 /* Supporting Files */,
+				4AA84CEC307C872100A91175 /* Info.plist */,
+			);
+			path = "Chinese Checkers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,9 +85,6 @@
 				4AA84CCC307C86A900A91175 /* Resources */,
 			);
 			buildRules = (
-			);
-			fileSystemSynchronizedGroups = (
-				4AA84CD0307C86A900A91175 /* Chinese Checkers */,
 			);
 			name = "Chinese Checkers";
 			productName = "Chinese Checkers";
@@ -115,6 +129,9 @@
 		4AA84CCC307C86A900A91175 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				4AA84CF3307C872100A91175 /* Assets.xcassets in Resources */,
+				4AA84CF4307C872100A91175 /* art.scnassets in Resources */,
+				4AA84CF6307C872100A91175 /* Main.storyboard in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
@@ -123,9 +140,23 @@
 		4AA84CCA307C86A900A91175 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				4AA84CF0307C872100A91175 /* AppDelegate.swift in Sources */,
+				4AA84CF1307C872100A91175 /* SceneDelegate.swift in Sources */,
+				4AA84CF2307C872100A91175 /* GameViewController.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4AA84CEE307C872100A91175 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AA84CED307C872100A91175 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4AA84CE1307C86AB00A91175 /* Debug configuration for PBXNativeTarget "Chinese Checkers" */ = {
