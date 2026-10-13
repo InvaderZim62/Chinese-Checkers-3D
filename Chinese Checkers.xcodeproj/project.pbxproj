@@ -16,6 +16,8 @@
 		4AA84D01307C89BF00A91175 /* BoardNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D00307C89BF00A91175 /* BoardNode.swift */; };
 		4AA84D03307C89DE00A91175 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D02307C89DE00A91175 /* Scene.swift */; };
 		4AA84D05307C970500A91175 /* MarbleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D04307C970500A91175 /* MarbleNode.swift */; };
+		4AA84D10307D897600A91175 /* Hud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D0F307D897600A91175 /* Hud.swift */; };
+		4AA84D12307DB05100A91175 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D11307DB05100A91175 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		4AA84D00307C89BF00A91175 /* BoardNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardNode.swift; sourceTree = "<group>"; };
 		4AA84D02307C89DE00A91175 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		4AA84D04307C970500A91175 /* MarbleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarbleNode.swift; sourceTree = "<group>"; };
+		4AA84D0F307D897600A91175 /* Hud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hud.swift; sourceTree = "<group>"; };
+		4AA84D11307DB05100A91175 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,8 @@
 				4AA84CEE307C872100A91175 /* Main.storyboard */,
 				4AA84CEB307C872100A91175 /* GameViewController.swift */,
 				4AA84D02307C89DE00A91175 /* Scene.swift */,
+				4AA84D0F307D897600A91175 /* Hud.swift */,
+				4AA84D11307DB05100A91175 /* Extensions.swift */,
 				4AA84D04307C970500A91175 /* MarbleNode.swift */,
 				4AA84D00307C89BF00A91175 /* BoardNode.swift */,
 				4AA84CEA307C872100A91175 /* art.scnassets */,
@@ -152,6 +158,8 @@
 				4AA84CF0307C872100A91175 /* AppDelegate.swift in Sources */,
 				4AA84CF1307C872100A91175 /* SceneDelegate.swift in Sources */,
 				4AA84D03307C89DE00A91175 /* Scene.swift in Sources */,
+				4AA84D12307DB05100A91175 /* Extensions.swift in Sources */,
+				4AA84D10307D897600A91175 /* Hud.swift in Sources */,
 				4AA84D01307C89BF00A91175 /* BoardNode.swift in Sources */,
 				4AA84D05307C970500A91175 /* MarbleNode.swift in Sources */,
 				4AA84CF2307C872100A91175 /* GameViewController.swift in Sources */,

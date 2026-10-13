@@ -37,7 +37,7 @@ class Scene {
     
     private func setupView() {
         scnView = view as? SCNView
-        scnView.allowsCameraControl = true  // true: allow standard camera controls with panning, false: move camera programmatically
+//        scnView.allowsCameraControl = true  // true: allow standard camera controls with panning, false: move camera programmatically
         scnView.autoenablesDefaultLighting = true
         scnView.isPlaying = true  // prevent SceneKit from entering a "paused" state, if there isn't anything to animate
         scnView.scene = scnScene
