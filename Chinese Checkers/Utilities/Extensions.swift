@@ -71,6 +71,14 @@ extension SCNVector3 {
         SCNVector3(x: -rhs.x, y: -rhs.y, z: -rhs.z)
     }
     
+    static var zero: SCNVector3 {
+        SCNVector3(x: 0, y: 0, z: 0)
+    }
+    
+    func distance(to point: SCNVector3) -> Double {
+        Double(sqrt(pow((self.x - point.x), 2) + pow((self.y - point.y), 2) + pow((self.z - point.z), 2)))
+    }
+
     func dot(_ rhs: SCNVector3) -> Float {
         return self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }

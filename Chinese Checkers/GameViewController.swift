@@ -22,7 +22,8 @@ struct Constant {
     static let boardSize = 7
     static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 0.08
-    static let holeSpacing: Float = 0.254
+    static let snapDistance: CGFloat = 0.10
+    static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
     static let nominalCameraDistance: Float = 3.6
     static let cameraAngle: Float = 50 * .pi / 180  // angle above horizon
@@ -40,10 +41,6 @@ class GameViewController: UIViewController {
     var computer = Computer()
     var marbleNodes = [MarbleNode]()
     var selectedMarbleNode: MarbleNode!
-    var initialBoardCoordinates = SCNVector3Zero
-    var initialMarbleNodePosition = SCNVector3Zero
-
-    var marbleNode: MarbleNode!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +63,7 @@ class GameViewController: UIViewController {
 
     private func createMarbleNodes() {
         for marble in board.marbles {
-            marbleNode = MarbleNode(radius: Constant.marbleRadius, player: marble.player)
+            let marbleNode = MarbleNode(radius: Constant.marbleRadius, player: marble.player)
             marbleNode.position = globalData.holePositions[marble.rowCol]!
             marbleNodes.append(marbleNode)
             scene.scnScene.rootNode.addChildNode(marbleNode)
@@ -99,17 +96,20 @@ class GameViewController: UIViewController {
         let location = recognizer.location(in: scene.scnView)  // absolute 2D screen coordinates
         if let pannedMarbleNode = selectedMarbleNode {
             switch recognizer.state {
-            case .began:
-                if let boardCoordinates = getBoardCoordinatesAt(location) {
-                    initialBoardCoordinates = boardCoordinates
-                }
-                initialMarbleNodePosition = pannedMarbleNode.position
+//            case .began:
+//                if let boardCoordinates = getBoardCoordinatesAt(location) {
+//                }
             case .changed:
                 // move pannedMarbleNode to pan location, in plane of board
                 if let boardCoordinates = getBoardCoordinatesAt(location) {
-                    let deltaBoardCoordinates = boardCoordinates - initialBoardCoordinates
-                    pannedMarbleNode.position = initialMarbleNodePosition + deltaBoardCoordinates
-                    pannedMarbleNode.position.y = Constant.marbleHeight
+                    let nearbyRowCol = board.holeRowCol(near: boardCoordinates)  // nil if no holes nearby
+                    
+                    if let nearbyRowCol {
+                        // panning near a hole - snap position
+                        pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
+                    } else {
+                        pannedMarbleNode.position = boardCoordinates
+                    }
                 }
             case .ended, .cancelled:
                 // update model
@@ -121,19 +121,20 @@ class GameViewController: UIViewController {
         }
     }
 
-    // convert from screen to board/apron coordinates
+    // convert from screen to board coordinates
     private func getBoardCoordinatesAt(_ location: CGPoint) -> SCNVector3? {
         var boardCoordinates: SCNVector3?
         let hitResults = scene.scnView.hitTest(location, options: [.searchMode: SCNHitTestSearchMode.all.rawValue])
-        if let result = hitResults.first(where: { $0.node.name == "Board" }) {
+        if let result = hitResults.first(where: { $0.node is BoardNode }) {
             boardCoordinates = result.localCoordinates
+            boardCoordinates?.y = Constant.marbleHeight
         }
         return boardCoordinates
     }
 
     // MARK: - Utility functions
     
-    // get shape node at location provided by tap gesture (nil if none tapped)
+    // get marble node at location provided by tap gesture (nil if none tapped)
     private func getMarbleNodeAt(_ location: CGPoint) -> MarbleNode? {
         var marbleNode: MarbleNode?
         let hitResults = scene.scnView.hitTest(location, options: [.searchMode: SCNHitTestSearchMode.all.rawValue])

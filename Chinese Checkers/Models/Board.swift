@@ -42,11 +42,10 @@ struct Board: CustomStringConvertible {
     }
 
     private func holePositionFor(rowCol: RowCol) -> SCNVector3 {
-        let holeSpacing = Constant.holeSpacing
         let halfSize: Float = 3
         let slantAngle: Float = 60.0 * .pi / 180.0
-        let x = holeSpacing * ((Float(rowCol.col) - halfSize) * cos(slantAngle) - (Float(rowCol.row) - halfSize) * cos(slantAngle))
-        let z = holeSpacing * ((Float(rowCol.col) - halfSize) * sin(slantAngle) + (Float(rowCol.row) - halfSize) * sin(slantAngle))
+        let x = Constant.holeSpacing * ((Float(rowCol.col) - halfSize) * cos(slantAngle) - (Float(rowCol.row) - halfSize) * cos(slantAngle))
+        let z = Constant.holeSpacing * ((Float(rowCol.col) - halfSize) * sin(slantAngle) + (Float(rowCol.row) - halfSize) * sin(slantAngle))
         return SCNVector3(x: x, y: Constant.marbleHeight, z: z)
     }
 
@@ -60,6 +59,10 @@ struct Board: CustomStringConvertible {
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[$0] }
     }
     
+    func holeRowCol(near point: SCNVector3) -> RowCol? {
+        globalData.holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
+    }
+
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
     }
