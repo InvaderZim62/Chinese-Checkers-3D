@@ -41,6 +41,11 @@ class GameViewController: UIViewController {
     var computer = Computer()
     var marbleNodes = [MarbleNode]()
     var selectedMarbleNode: MarbleNode!
+    
+    // panning vars
+    var availableEndpoints = [RowCol]()
+    var startRowCol = RowCol.zero
+    var endRowCol = RowCol.zero
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +92,7 @@ class GameViewController: UIViewController {
         if let touchedShapeNode = getMarbleNodeAt(location) {
             // shape touched (select it)
             selectedMarbleNode = touchedShapeNode
+            startRowCol = board.holeRowCol(near: selectedMarbleNode.position) ?? RowCol.center
         }
     }
 
@@ -94,26 +100,35 @@ class GameViewController: UIViewController {
     // if domino selected, move it along pan gesture, otherwise create string of dominos along pan gesture
     @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         let location = recognizer.location(in: scene.scnView)  // absolute 2D screen coordinates
+        guard let boardCoordinates = getBoardCoordinatesAt(location) else { return }
+        
         if let pannedMarbleNode = selectedMarbleNode {
             switch recognizer.state {
-//            case .began:
-//                if let boardCoordinates = getBoardCoordinatesAt(location) {
-//                }
+            case .began:
+                availableEndpoints = board.availableEndpoints(from: startRowCol, forPlayer: .human)
+                endRowCol = startRowCol
             case .changed:
                 // move pannedMarbleNode to pan location, in plane of board
-                if let boardCoordinates = getBoardCoordinatesAt(location) {
-                    let nearbyRowCol = board.holeRowCol(near: boardCoordinates)  // nil if no holes nearby
-                    
-                    if let nearbyRowCol {
-                        // panning near a hole - snap position
-                        pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
-                    } else {
-                        pannedMarbleNode.position = boardCoordinates
-                    }
+                let nearbyRowCol = board.holeRowCol(near: boardCoordinates)  // nil if no holes nearby
+                
+                if let nearbyRowCol, nearbyRowCol == startRowCol || availableEndpoints.contains(nearbyRowCol) {
+                    // panning near starting hole or any legal move hole - snap position, set end point
+                    pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
+                    endRowCol = nearbyRowCol
+                } else if nearbyRowCol == nil {
+                    pannedMarbleNode.position = boardCoordinates
+                } else {
+                    pannedMarbleNode.position = boardCoordinates
+                    endRowCol = startRowCol
                 }
             case .ended, .cancelled:
-                // update model
-//                updateMarbleModelFor(partNode: pannedMarbleNode)  // pws: check if DominoDraw does this easier
+                if endRowCol == startRowCol {
+                    // marble left unsnapped - move it back to startPosition
+                    pannedMarbleNode.position = globalData.holePositions[startRowCol]!
+                } else {
+                    // marble successfully moved
+                    board.updateMarbleLocationForMove(Move(from: startRowCol, to: endRowCol))  // update model
+                }
                 selectedMarbleNode = nil
             default:
                 break

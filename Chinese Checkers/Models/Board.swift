@@ -20,8 +20,17 @@ struct Board: CustomStringConvertible {
 
     init() {
         initializeBoard()
+//        setupTestBoardSetIndividual()
     }
     
+    // use with boardSize = 7, playerSize = 4, computer moves first
+    // test long sequence from (4, 4) to (0,0)
+    mutating func setupTestBoardSetIndividual() {
+        marbles.removeAll()
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 0)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 6)))
+    }
+
     private mutating func initializeBoard() {
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
@@ -40,7 +49,7 @@ struct Board: CustomStringConvertible {
             }
         }
     }
-
+    
     private func holePositionFor(rowCol: RowCol) -> SCNVector3 {
         let halfSize: Float = 3
         let slantAngle: Float = 60.0 * .pi / 180.0
@@ -60,7 +69,7 @@ struct Board: CustomStringConvertible {
     }
     
     func holeRowCol(near point: SCNVector3) -> RowCol? {
-        globalData.holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
+        globalData.holePositions.first(where: { $0.value.distance(to: point) < Double(Constant.holeSpacing / 3) })?.key
     }
 
     func isOccupied(_ rowCol: RowCol) -> Bool {
