@@ -17,12 +17,20 @@ import SceneKit
 
 class MarbleNode: SCNNode {
     
+    var player: Player!
+    
+    var color: UIColor {
+        player == .computer ? Constant.computerColor : Constant.humanColor
+    }
+
     override init() {
         super.init()
     }
 
-    init(radius: CGFloat, color: UIColor) {
+    init(radius: CGFloat, player: Player) {
         super.init()
+        self.player = player
+        
         name = "Marble"
         
         geometry = SCNSphere(radius: radius)

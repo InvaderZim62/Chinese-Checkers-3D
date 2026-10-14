@@ -53,10 +53,9 @@ class Scene {
             cameraNode.camera?.usesOrthographicProjection = true
             cameraNode.camera?.orthographicScale = 2.2
         }
-        let cameraAngle: Float = 45 * .pi / 180  // position camera 40 degrees above horizon
-        cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float(cameraAngle), 1, 0, 0)
+        cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float(Constant.cameraAngle), 1, 0, 0)
         let cameraDistance = Constant.nominalCameraDistance * (2 * Float(view.bounds.width) / 375.0 - 1)  // iPhone SE is 375 wide
-        cameraNode.position = SCNVector3(0, cameraDistance * sin(cameraAngle), cameraDistance * cos(cameraAngle))
+        cameraNode.position = SCNVector3(0, cameraDistance * sin(Constant.cameraAngle), cameraDistance * cos(Constant.cameraAngle))
         cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, Float(-0.02), 1, 0, 0)  // rotate camera a little more down, to move room up on screen
         scnScene.rootNode.addChildNode(cameraNode)
 //        scnView.allowsCameraControl = false

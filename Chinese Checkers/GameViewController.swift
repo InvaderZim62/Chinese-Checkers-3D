@@ -17,27 +17,28 @@ import QuartzCore
 import SceneKit
 
 struct Constant {
-    static let nominalCameraDistance: Float = 3.6
-    static let isOrthographicProjection = true
+    static let humanColor = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
+    static let computerColor = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
+    static let boardSize = 7
+    static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 0.08
     static let holeSpacing: Float = 0.254
     static let marbleHeight: Float = 0.09  // when on board
+    static let nominalCameraDistance: Float = 3.6
+    static let cameraAngle: Float = 50 * .pi / 180  // angle above horizon
+    static let isOrthographicProjection = false  // false: marble size decreases with distance from camera
     static let bounciness: CGFloat = 0
 }
 
-struct RowCol: CustomStringConvertible {
-    let row: Int
-    let col: Int
-    
-    var description: String {
-        "(\(row), \(col))"
-    }
-}
-
 class GameViewController: UIViewController {
+    
+    let globalData = GlobalData.shared
 
     lazy var scene = Scene(view: view)
     var hud = Hud()
+    var board = Board()
+    var computer = Computer()
+    var marbleNodes = [MarbleNode]()
     var selectedMarbleNode: MarbleNode!
     var initialBoardCoordinates = SCNVector3Zero
     var initialMarbleNodePosition = SCNVector3Zero
@@ -48,65 +49,28 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         setupHud()
-        
+        createMarbleNodes()
+
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         scene.scnView.addGestureRecognizer(pan)
 
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
-
-        let marbleColor = UIColor.red
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 0))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 3))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 0, col: 6))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 0))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 3))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 3, col: 6))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 0))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 3))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
-        
-        marbleNode = MarbleNode(radius: Constant.marbleRadius, color: marbleColor)
-        marbleNode.position = holePositionFor(rowCol: RowCol(row: 6, col: 6))
-        scene.scnScene.rootNode.addChildNode(marbleNode)
     }
-    
-    private func holePositionFor(rowCol: RowCol) -> SCNVector3 {
-        let holeSpacing = Constant.holeSpacing
-        let halfSize: Float = 3
-        let slantAngle: Float = 60.0 * .pi / 180.0
-        let x = holeSpacing * ((Float(rowCol.col) - halfSize) * cos(slantAngle) - (Float(rowCol.row) - halfSize) * cos(slantAngle))
-        let z = holeSpacing * ((Float(rowCol.col) - halfSize) * sin(slantAngle) + (Float(rowCol.row) - halfSize) * sin(slantAngle))
-        return SCNVector3(x: x, y: Constant.marbleHeight, z: z)
-    }
-    
+
     private func setupHud() {
         hud = Hud(size: scene.scnView.bounds.size)
         hud.setup(touchHandler: handleTouch)
         scene.scnView.overlaySKScene = hud
+    }
+
+    private func createMarbleNodes() {
+        for marble in board.marbles {
+            marbleNode = MarbleNode(radius: Constant.marbleRadius, player: marble.player)
+            marbleNode.position = globalData.holePositions[marble.rowCol]!
+            marbleNodes.append(marbleNode)
+            scene.scnScene.rootNode.addChildNode(marbleNode)
+        }
     }
 
     // *** mostly from BingBangBoing ***

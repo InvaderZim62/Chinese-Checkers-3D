@@ -17,7 +17,11 @@
 		4AA84D03307C89DE00A91175 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D02307C89DE00A91175 /* Scene.swift */; };
 		4AA84D05307C970500A91175 /* MarbleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D04307C970500A91175 /* MarbleNode.swift */; };
 		4AA84D10307D897600A91175 /* Hud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D0F307D897600A91175 /* Hud.swift */; };
-		4AA84D12307DB05100A91175 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D11307DB05100A91175 /* Extensions.swift */; };
+		4AA84D17307F046700A91175 /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D15307F046700A91175 /* Computer.swift */; };
+		4AA84D18307F046700A91175 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D14307F046700A91175 /* Board.swift */; };
+		4AA84D1D307F04CC00A91175 /* StructsAndEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D1A307F04CC00A91175 /* StructsAndEnums.swift */; };
+		4AA84D1E307F04CC00A91175 /* GlobalData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D19307F04CC00A91175 /* GlobalData.swift */; };
+		4AA84D1F307F04CC00A91175 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA84D1B307F04CC00A91175 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +37,11 @@
 		4AA84D02307C89DE00A91175 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		4AA84D04307C970500A91175 /* MarbleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarbleNode.swift; sourceTree = "<group>"; };
 		4AA84D0F307D897600A91175 /* Hud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hud.swift; sourceTree = "<group>"; };
-		4AA84D11307DB05100A91175 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		4AA84D14307F046700A91175 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		4AA84D15307F046700A91175 /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
+		4AA84D19307F04CC00A91175 /* GlobalData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalData.swift; sourceTree = "<group>"; };
+		4AA84D1A307F04CC00A91175 /* StructsAndEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructsAndEnums.swift; sourceTree = "<group>"; };
+		4AA84D1B307F04CC00A91175 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,14 +86,42 @@
 				4AA84CEB307C872100A91175 /* GameViewController.swift */,
 				4AA84D02307C89DE00A91175 /* Scene.swift */,
 				4AA84D0F307D897600A91175 /* Hud.swift */,
-				4AA84D11307DB05100A91175 /* Extensions.swift */,
-				4AA84D04307C970500A91175 /* MarbleNode.swift */,
-				4AA84D00307C89BF00A91175 /* BoardNode.swift */,
+				4AA84D16307F046700A91175 /* Models */,
+				4AA84D13307F045900A91175 /* Nodes */,
+				4AA84D1C307F04CC00A91175 /* Utilities */,
 				4AA84CEA307C872100A91175 /* art.scnassets */,
 				4AA84CE9307C872100A91175 /* Supporting Files */,
 				4AA84CEC307C872100A91175 /* Info.plist */,
 			);
 			path = "Chinese Checkers";
+			sourceTree = "<group>";
+		};
+		4AA84D13307F045900A91175 /* Nodes */ = {
+			isa = PBXGroup;
+			children = (
+				4AA84D04307C970500A91175 /* MarbleNode.swift */,
+				4AA84D00307C89BF00A91175 /* BoardNode.swift */,
+			);
+			path = Nodes;
+			sourceTree = "<group>";
+		};
+		4AA84D16307F046700A91175 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4AA84D14307F046700A91175 /* Board.swift */,
+				4AA84D15307F046700A91175 /* Computer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4AA84D1C307F04CC00A91175 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				4AA84D19307F04CC00A91175 /* GlobalData.swift */,
+				4AA84D1A307F04CC00A91175 /* StructsAndEnums.swift */,
+				4AA84D1B307F04CC00A91175 /* Extensions.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -157,11 +193,15 @@
 			files = (
 				4AA84CF0307C872100A91175 /* AppDelegate.swift in Sources */,
 				4AA84CF1307C872100A91175 /* SceneDelegate.swift in Sources */,
+				4AA84D1D307F04CC00A91175 /* StructsAndEnums.swift in Sources */,
+				4AA84D1E307F04CC00A91175 /* GlobalData.swift in Sources */,
+				4AA84D1F307F04CC00A91175 /* Extensions.swift in Sources */,
 				4AA84D03307C89DE00A91175 /* Scene.swift in Sources */,
-				4AA84D12307DB05100A91175 /* Extensions.swift in Sources */,
 				4AA84D10307D897600A91175 /* Hud.swift in Sources */,
 				4AA84D01307C89BF00A91175 /* BoardNode.swift in Sources */,
 				4AA84D05307C970500A91175 /* MarbleNode.swift in Sources */,
+				4AA84D17307F046700A91175 /* Computer.swift in Sources */,
+				4AA84D18307F046700A91175 /* Board.swift in Sources */,
 				4AA84CF2307C872100A91175 /* GameViewController.swift in Sources */,
 			);
 		};
