@@ -25,10 +25,13 @@ struct Constant {
     static let snapDistance: CGFloat = 0.10
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
+    static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
+    static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
+    static let lineFadeTime: TimeInterval = 0.5
+
     static let nominalCameraDistance: Float = 3.6
     static let cameraAngle: Float = 50 * .pi / 180  // angle above horizon
     static let isOrthographicProjection = false  // false: marble size decreases with distance from camera
-    static let bounciness: CGFloat = 0
 }
 
 class GameViewController: UIViewController {
@@ -41,17 +44,40 @@ class GameViewController: UIViewController {
     var computer = Computer()
     var marbleNodes = [MarbleNode]()
     var selectedMarbleNode: MarbleNode!
-    
+    var isGameOver = false
+    var whoseTurn: Player! {
+        didSet {
+//            turnIndicatorView.player = whoseTurn
+            if whoseTurn == .computer && !isGameOver {
+                computerMove()
+            }
+        }
+    }
+
     // panning vars
     var availableEndpoints = [RowCol]()
     var startRowCol = RowCol.zero
     var endRowCol = RowCol.zero
 
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
+        } else {
+            return .all
+        }
+    }
+    
+    // MARK: -
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupHud()
         createMarbleNodes()
+        whoseTurn = Player.random()
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         scene.scnView.addGestureRecognizer(pan)
@@ -88,10 +114,11 @@ class GameViewController: UIViewController {
     // select marble, if any gesture begins on it (touch is always called first);
     // touch is intercepted by hud, which calls this handler
     func handleTouch(hudLocation: CGPoint) {
+        guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn to pan
         let location = CGPoint(x: hudLocation.x, y: scene.scnView.bounds.height - hudLocation.y)  // hud origin: lower left, scene origin: upper left
-        if let touchedShapeNode = getMarbleNodeAt(location) {
-            // shape touched (select it)
-            selectedMarbleNode = touchedShapeNode
+        if let touchedMarbleNode = getMarbleNodeAt(location), touchedMarbleNode.player == .human {
+            // marble touched (select it)
+            selectedMarbleNode = touchedMarbleNode
             startRowCol = board.holeRowCol(near: selectedMarbleNode.position) ?? RowCol.center
         }
     }
@@ -124,10 +151,13 @@ class GameViewController: UIViewController {
             case .ended, .cancelled:
                 if endRowCol == startRowCol {
                     // marble left unsnapped - move it back to startPosition
-                    pannedMarbleNode.position = globalData.holePositions[startRowCol]!
+                    pannedMarbleNode.runAction(SCNAction.move(to: globalData.holePositions[startRowCol]!, duration: Constant.closeMoveTime))
                 } else {
                     // marble successfully moved
                     board.updateMarbleLocationForMove(Move(from: startRowCol, to: endRowCol))  // update model
+                    print(board)
+                    print("Human move: from: \(startRowCol), to: \(endRowCol)")
+                    whoseTurn.next()
                 }
                 selectedMarbleNode = nil
             default:
@@ -158,16 +188,43 @@ class GameViewController: UIViewController {
         }
         return marbleNode
     }
-
-    override var prefersStatusBarHidden: Bool {
-        return true
+    
+    private func getMarbleNodeAt(_ rowCol: RowCol) -> MarbleNode? {
+        let holePosition = globalData.holePositions[rowCol]
+        let marbleNode = marbleNodes.first(where: { $0.position.distance(to: holePosition!) < Constant.snapDistance })
+        return marbleNode
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
+    // MARK: - Computer
+    
+    private func computerMove() {
+//        spinner.startAnimating()
+        DispatchQueue.global(qos: .userInitiated).async {
+            //------------------------------------------------------------------------
+            let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
+            //------------------------------------------------------------------------
+            let marbleNode = self.getMarbleNodeAt(bestMoveSequence.first!.from)
+            // build move actions
+            var actions = [SCNAction]()
+            for move in bestMoveSequence {
+                self.board.updateMarbleLocationForMove(move)
+                let destination = self.globalData.holePositions[move.to]
+                let moveAction = SCNAction.move(to: destination!, duration: Constant.farMoveTime)
+                let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
+                actions.append(contentsOf: [waitAction, moveAction])
+            }
+            DispatchQueue.main.async {
+                marbleNode?.runAction(SCNAction.sequence(actions)) {
+//                    self.fadeOutMoveView()
+//                    self.checkProgress()
+//                    self.spinner.stopAnimating()
+                    self.whoseTurn.next()
+                    Task { @MainActor in  // MainActor uses board's CustomStringConvertible
+                        print(self.board)
+                        print("Computer Sequence: \(bestMoveSequence)")
+                    }
+                }
+            }
         }
     }
 }
