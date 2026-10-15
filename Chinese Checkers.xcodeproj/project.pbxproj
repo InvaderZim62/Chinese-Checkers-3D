@@ -99,8 +99,8 @@
 		4AA84D13307F045900A91175 /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
-				4AA84D04307C970500A91175 /* MarbleNode.swift */,
 				4AA84D00307C89BF00A91175 /* BoardNode.swift */,
+				4AA84D04307C970500A91175 /* MarbleNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";

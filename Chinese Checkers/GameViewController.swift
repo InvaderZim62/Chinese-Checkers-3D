@@ -43,11 +43,12 @@ class GameViewController: UIViewController {
     var board = Board()
     var computer = Computer()
     var marbleNodes = [MarbleNode]()
+    var turnIndicatorNode: MarbleNode!
     var selectedMarbleNode: MarbleNode!
     var isGameOver = false
     var whoseTurn: Player! {
         didSet {
-//            turnIndicatorView.player = whoseTurn
+            turnIndicatorNode.player = whoseTurn
             if whoseTurn == .computer && !isGameOver {
                 computerMove()
             }
@@ -77,6 +78,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         setupHud()
         createMarbleNodes()
+        createTurnIndicatorNode()
         whoseTurn = Player.random()
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
@@ -99,6 +101,12 @@ class GameViewController: UIViewController {
             marbleNodes.append(marbleNode)
             scene.scnScene.rootNode.addChildNode(marbleNode)
         }
+    }
+    
+    private func createTurnIndicatorNode() {
+        turnIndicatorNode = MarbleNode(radius: Constant.marbleRadius)
+        turnIndicatorNode.position = SCNVector3(x: -0.95, y: 0, z: -1.25)
+        scene.scnScene.rootNode.addChildNode(turnIndicatorNode)
     }
 
     // *** mostly from BingBangBoing ***
@@ -211,7 +219,7 @@ class GameViewController: UIViewController {
                 let destination = self.globalData.holePositions[move.to]
                 let moveAction = SCNAction.move(to: destination!, duration: Constant.farMoveTime)
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
-                actions.append(contentsOf: [waitAction, moveAction])
+                actions.append(contentsOf: [moveAction, waitAction])
             }
             DispatchQueue.main.async {
                 marbleNode?.runAction(SCNAction.sequence(actions)) {

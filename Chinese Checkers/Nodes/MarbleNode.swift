@@ -17,17 +17,21 @@ import SceneKit
 
 class MarbleNode: SCNNode {
     
-    var player: Player!
-    
+    var player: Player! { didSet { updateColor() } }
+
     var color: UIColor {
         player == .computer ? Constant.computerColor : Constant.humanColor
+    }
+    
+    private func updateColor() {
+        geometry?.firstMaterial?.diffuse.contents = color
     }
 
     override init() {
         super.init()
     }
 
-    init(radius: CGFloat, player: Player) {
+    init(radius: CGFloat, player: Player = .human) {
         super.init()
         self.player = player
         
