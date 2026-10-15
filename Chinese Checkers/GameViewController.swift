@@ -109,14 +109,6 @@ class GameViewController: UIViewController {
         scene.scnScene.rootNode.addChildNode(turnIndicatorNode)
     }
 
-    // *** mostly from BingBangBoing ***
-    // update transform of partModel associated with partNode
-//    private func updateMarbleModelFor(partNode: MarbleNode) {
-//        if let marbleIndex = partModels.firstIndex(where: { $0.id == partNode.modelId }) {
-//            partModels[marbleIndex].setTransform(to: partNode.transform)
-//        }
-//    }
-
     // MARK: - Gesture Recognizers
     
     // select marble, if any gesture begins on it (touch is always called first);
@@ -131,8 +123,7 @@ class GameViewController: UIViewController {
         }
     }
 
-    // *** mostly from BingBangBoing ***
-    // if domino selected, move it along pan gesture, otherwise create string of dominos along pan gesture
+    // move selected marble along pan gesture
     @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         let location = recognizer.location(in: scene.scnView)  // absolute 2D screen coordinates
         guard let boardCoordinates = getBoardCoordinatesAt(location) else { return }
@@ -151,8 +142,10 @@ class GameViewController: UIViewController {
                     pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
                 } else if nearbyRowCol == nil {
+                    // panning near any other hole - keep panning
                     pannedMarbleNode.position = boardCoordinates
                 } else {
+                    // panning away from all holes - reset end point
                     pannedMarbleNode.position = boardCoordinates
                     endRowCol = startRowCol
                 }
@@ -221,16 +214,14 @@ class GameViewController: UIViewController {
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
                 actions.append(contentsOf: [moveAction, waitAction])
             }
-            DispatchQueue.main.async {
-                marbleNode?.runAction(SCNAction.sequence(actions)) {
-//                    self.fadeOutMoveView()
-//                    self.checkProgress()
-//                    self.spinner.stopAnimating()
-                    self.whoseTurn.next()
-                    Task { @MainActor in  // MainActor uses board's CustomStringConvertible
-                        print(self.board)
-                        print("Computer Sequence: \(bestMoveSequence)")
-                    }
+            marbleNode?.runAction(SCNAction.sequence(actions)) {
+//                self.fadeOutMoveView()
+//                self.checkProgress()
+//                self.spinner.stopAnimating()
+                self.whoseTurn.next()
+                Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
+                    print(self.board)
+                    print("Computer Sequence: \(bestMoveSequence)")
                 }
             }
         }
