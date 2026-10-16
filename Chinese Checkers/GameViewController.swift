@@ -25,8 +25,8 @@ struct Constant {
     static let snapDistance: CGFloat = 0.10
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
-    static let moveHeight = SCNVector3(x: 0, y: 0.08, z: 0)
-    static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
+    static let moveHeight = SCNVector3(x: 0, y: Float(marbleRadius), z: 0)
+    static let farMoveTime: TimeInterval = 0.4  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
     static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble
     static let lineFadeTime: TimeInterval = 0.5
@@ -213,11 +213,11 @@ class GameViewController: UIViewController {
                 self.board.updateMarbleLocationForMove(move)
                 let from = self.globalData.holePositions[move.from]
                 let to = self.globalData.holePositions[move.to]
-                let riseAction = SCNAction.move(to: from! + Constant.moveHeight, duration: Constant.upDownTime)
-                let moveAction = SCNAction.move(to: to! + Constant.moveHeight, duration: Constant.farMoveTime)
-                let lowerAction = SCNAction.move(to: to!, duration: Constant.upDownTime)
+                let midPoint = from! * 0.5 + to! * 0.5 + Constant.moveHeight * 2
+                let riseAction = SCNAction.move(to: midPoint, duration: Constant.farMoveTime / 2)
+                let lowerAction = SCNAction.move(to: to!, duration: Constant.farMoveTime / 2)
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
-                actions.append(contentsOf: [riseAction, moveAction, lowerAction, waitAction])
+                actions.append(contentsOf: [riseAction, lowerAction, waitAction])
             }
             marbleNode?.runAction(SCNAction.sequence(actions)) {
 //                self.fadeOutMoveView()
