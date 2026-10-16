@@ -25,8 +25,10 @@ struct Constant {
     static let snapDistance: CGFloat = 0.10
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
+    static let moveHeight = SCNVector3(x: 0, y: 0.08, z: 0)
     static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
+    static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble
     static let lineFadeTime: TimeInterval = 0.5
 
     static let nominalCameraDistance: Float = 3.6
@@ -111,7 +113,7 @@ class GameViewController: UIViewController {
 
     // MARK: - Gesture Recognizers
     
-    // select marble, if any gesture begins on it (touch is always called first);
+    // select marble, if any gesture begins on it (touch is called before pan);
     // touch is intercepted by hud, which calls this handler
     func handleTouch(hudLocation: CGPoint) {
         guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn to pan
@@ -123,7 +125,7 @@ class GameViewController: UIViewController {
         }
     }
 
-    // move selected marble along pan gesture
+    // move selected marble along pan gesture; snap marble to legal move holes
     @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         let location = recognizer.location(in: scene.scnView)  // absolute 2D screen coordinates
         guard let boardCoordinates = getBoardCoordinatesAt(location) else { return }
@@ -141,12 +143,12 @@ class GameViewController: UIViewController {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
-                } else if nearbyRowCol == nil {
+                } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
-                    pannedMarbleNode.position = boardCoordinates
+                    pannedMarbleNode.position = boardCoordinates + Constant.moveHeight
                 } else {
                     // panning away from all holes - reset end point
-                    pannedMarbleNode.position = boardCoordinates
+                    pannedMarbleNode.position = boardCoordinates + Constant.moveHeight
                     endRowCol = startRowCol
                 }
             case .ended, .cancelled:
@@ -209,10 +211,13 @@ class GameViewController: UIViewController {
             var actions = [SCNAction]()
             for move in bestMoveSequence {
                 self.board.updateMarbleLocationForMove(move)
-                let destination = self.globalData.holePositions[move.to]
-                let moveAction = SCNAction.move(to: destination!, duration: Constant.farMoveTime)
+                let from = self.globalData.holePositions[move.from]
+                let to = self.globalData.holePositions[move.to]
+                let riseAction = SCNAction.move(to: from! + Constant.moveHeight, duration: Constant.upDownTime)
+                let moveAction = SCNAction.move(to: to! + Constant.moveHeight, duration: Constant.farMoveTime)
+                let lowerAction = SCNAction.move(to: to!, duration: Constant.upDownTime)
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
-                actions.append(contentsOf: [moveAction, waitAction])
+                actions.append(contentsOf: [riseAction, moveAction, lowerAction, waitAction])
             }
             marbleNode?.runAction(SCNAction.sequence(actions)) {
 //                self.fadeOutMoveView()
