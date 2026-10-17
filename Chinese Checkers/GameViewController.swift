@@ -56,6 +56,12 @@ class GameViewController: UIViewController {
             }
         }
     }
+    var isHardPlay = false {
+        didSet {
+            globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is slow)
+//            saveDefaults()
+        }
+    }
 
     // panning vars
     var availableEndpoints = [RowCol]()
@@ -92,7 +98,7 @@ class GameViewController: UIViewController {
 
     private func setupHud() {
         hud = Hud(size: scene.scnView.bounds.size)
-        hud.setup(restartCallback: restartSelected, touchHandler: handleTouch)
+        hud.setup(difficultyHandler: difficultySelected, restartHandler: restartSelected, touchHandler: handleTouch)
         scene.scnView.overlaySKScene = hud
     }
 
@@ -236,6 +242,10 @@ class GameViewController: UIViewController {
         if whoseTurn == .computer {
             computerMove()
         }
+    }
+    
+    private func difficultySelected() {
+        isHardPlay = hud.isHardPlay
     }
 
     // MARK: - Computer
