@@ -92,7 +92,7 @@ class GameViewController: UIViewController {
 
     private func setupHud() {
         hud = Hud(size: scene.scnView.bounds.size)
-        hud.setup(touchHandler: handleTouch)
+        hud.setup(restartCallback: restartSelected, touchHandler: handleTouch)
         scene.scnView.overlaySKScene = hud
     }
 
@@ -197,7 +197,26 @@ class GameViewController: UIViewController {
         let marbleNode = marbleNodes.first(where: { $0.position.distance(to: holePosition!) < Constant.snapDistance })
         return marbleNode
     }
+
+    // MARK: - Hud callbacks
     
+    // reset game
+    private func restartSelected() {
+        isGameOver = false
+        hud.winner = nil
+        turnIndicatorNode.isHidden = false
+        // move all marbles back to their starting positions
+//        board.updateAllMarbleLocationsToStartingPositions()
+//        UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
+//            self.updateViewFromModel()
+//        }, completion: { _ in
+//            if self.whoseTurn == .computer {
+//                self.computerMove()
+//            }
+//        }
+//        )
+    }
+
     // MARK: - Computer
     
     private func computerMove() {
