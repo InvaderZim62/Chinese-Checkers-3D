@@ -53,7 +53,7 @@ class Hud: SKScene {
     private func updateMessage() {
         messageLabel.isHidden = winner == nil
         if let winner {
-            messageLabel.text = winner == .computer ? "computer Won!" : "You Won!"
+            messageLabel.text = winner == .computer ? "Computer Wins!" : "You Win!"
         }
     }
 

@@ -160,6 +160,7 @@ class GameViewController: UIViewController {
                     board.updateMarbleLocationForMove(Move(from: startRowCol, to: endRowCol))  // update model
                     print(board)
                     print("Human move: from: \(startRowCol), to: \(endRowCol)")
+                    checkProgress()
                     whoseTurn.next()
                 }
                 selectedMarbleNode = nil
@@ -196,6 +197,16 @@ class GameViewController: UIViewController {
         let holePosition = globalData.holePositions[rowCol]
         let marbleNode = marbleNodes.first(where: { $0.position.distance(to: holePosition!) < Constant.snapDistance })
         return marbleNode
+    }
+
+    private func checkProgress() {
+        if let winner = board.winner() {
+            isGameOver = true
+            hud.winner = winner
+            turnIndicatorNode.isHidden = true
+        } else {
+            hud.winner = nil
+        }
     }
 
     // MARK: - Hud callbacks
@@ -240,7 +251,7 @@ class GameViewController: UIViewController {
             }
             marbleNode?.runAction(SCNAction.sequence(actions)) {
 //                self.fadeOutMoveView()
-//                self.checkProgress()
+                self.checkProgress()
 //                self.spinner.stopAnimating()
                 self.whoseTurn.next()
                 Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible

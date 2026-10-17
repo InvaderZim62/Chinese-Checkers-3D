@@ -20,9 +20,18 @@ struct Board: CustomStringConvertible {
 
     init() {
         initializeBoard()
+//        setUpForEndGame()
 //        setupTestBoardSetIndividual()
     }
-    
+
+    // use with boardSize = 7, playerSize = 4
+    mutating func setUpForEndGame() {
+        // reverse sides, then move marbles out of position
+        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
+        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 2)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 5, col: 5), to: RowCol(row: 2, col: 5)))
+    }
+
     // use with boardSize = 7, playerSize = 4, computer moves first
     // test long sequence from (4, 4) to (0,0)
     mutating func setupTestBoardSetIndividual() {
