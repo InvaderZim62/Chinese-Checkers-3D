@@ -26,7 +26,7 @@ struct Constant {
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
     static let moveHeight = SCNVector3(x: 0, y: Float(marbleRadius), z: 0)
-    static let farMoveTime: TimeInterval = 0.4  // used for computer's move and returning marbles during restart
+    static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
     static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble
     static let lineFadeTime: TimeInterval = 0.5
@@ -198,6 +198,15 @@ class GameViewController: UIViewController {
         let marbleNode = marbleNodes.first(where: { $0.position.distance(to: holePosition!) < Constant.snapDistance })
         return marbleNode
     }
+    
+    // assumes a marbleNode is at fromRowCol
+    private func moveMarbleNode(from fromRowCol: RowCol, to toRowCol: RowCol) {
+        if let marbleNode = getMarbleNodeAt(fromRowCol) {
+            let toPosition = globalData.holePositions[toRowCol]!
+            let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
+            marbleNode.runAction(move)
+        }
+    }
 
     private func checkProgress() {
         if let winner = board.winner() {
@@ -217,15 +226,16 @@ class GameViewController: UIViewController {
         hud.winner = nil
         turnIndicatorNode.isHidden = false
         // move all marbles back to their starting positions
-//        board.updateAllMarbleLocationsToStartingPositions()
-//        UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
-//            self.updateViewFromModel()
-//        }, completion: { _ in
-//            if self.whoseTurn == .computer {
-//                self.computerMove()
-//            }
-//        }
-//        )
+        let fromRowCols = board.marbles.map { $0.rowCol }
+        board.updateAllMarbleLocationsToStartingPositions()
+        let toRowCols = board.marbles.map { $0.rowCol }
+        for (index, fromRowCol) in fromRowCols.enumerated() {
+            let toRowCol = toRowCols[index]
+            moveMarbleNode(from: fromRowCol, to: toRowCol)
+        }
+        if whoseTurn == .computer {
+            computerMove()
+        }
     }
 
     // MARK: - Computer
@@ -243,7 +253,7 @@ class GameViewController: UIViewController {
                 self.board.updateMarbleLocationForMove(move)
                 let from = self.globalData.holePositions[move.from]
                 let to = self.globalData.holePositions[move.to]
-                let midPoint = from! * 0.5 + to! * 0.5 + Constant.moveHeight * 2
+                let midPoint = (from! + to!) / 2 + Constant.moveHeight * 1.5
                 let riseAction = SCNAction.move(to: midPoint, duration: Constant.farMoveTime / 2)
                 let lowerAction = SCNAction.move(to: to!, duration: Constant.farMoveTime / 2)
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)

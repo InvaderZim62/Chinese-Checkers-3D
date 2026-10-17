@@ -67,6 +67,10 @@ extension SCNVector3 {
         return SCNVector3(x: lhs.x * scaler, y: lhs.y * scaler, z: lhs.z * scaler)
     }
     
+    static func /(lhs: SCNVector3, scaler: Float) -> SCNVector3 {
+        return SCNVector3(x: lhs.x / scaler, y: lhs.y / scaler, z: lhs.z / scaler)
+    }
+
     static prefix func -(rhs: SCNVector3) -> SCNVector3 {
         SCNVector3(x: -rhs.x, y: -rhs.y, z: -rhs.z)
     }
