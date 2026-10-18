@@ -59,7 +59,7 @@ class GameViewController: UIViewController {
     var isHardPlay = false {
         didSet {
             globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is slow)
-//            saveDefaults()
+            saveDefaults()
         }
     }
 
@@ -84,6 +84,7 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        getDefaults()
         setupHud()
         createMarbleNodes()
         createTurnIndicatorNode()
@@ -94,6 +95,23 @@ class GameViewController: UIViewController {
 
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        hud.isHardPlay = isHardPlay  // don't move to viewDidLoad (hud doesn't exist, yet)
+    }
+
+    private func getDefaults() {
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "isHardPlay") != nil {
+            isHardPlay = defaults.bool(forKey: "isHardPlay")
+        }
+    }
+    
+    private func saveDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.set(isHardPlay, forKey: "isHardPlay")
     }
 
     private func setupHud() {
