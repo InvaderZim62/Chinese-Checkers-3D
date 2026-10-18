@@ -231,6 +231,16 @@ class GameViewController: UIViewController {
             marbleNode.runAction(move)
         }
     }
+    
+    private func moveAllMarblesBackToStartingPositions() {
+        let fromRowCols = board.marbles.map { $0.rowCol }
+        board.updateAllMarbleLocationsToStartingPositions()
+        let toRowCols = board.marbles.map { $0.rowCol }
+        for (index, fromRowCol) in fromRowCols.enumerated() {
+            let toRowCol = toRowCols[index]
+            moveMarbleNode(from: fromRowCol, to: toRowCol)
+        }
+    }
 
     private func checkProgress() {
         if let winner = board.winner() {
@@ -249,14 +259,7 @@ class GameViewController: UIViewController {
         isGameOver = false
         hud.winner = nil
         turnIndicatorNode.isHidden = false
-        // move all marbles back to their starting positions
-        let fromRowCols = board.marbles.map { $0.rowCol }
-        board.updateAllMarbleLocationsToStartingPositions()
-        let toRowCols = board.marbles.map { $0.rowCol }
-        for (index, fromRowCol) in fromRowCols.enumerated() {
-            let toRowCol = toRowCols[index]
-            moveMarbleNode(from: fromRowCol, to: toRowCol)
-        }
+        moveAllMarblesBackToStartingPositions()
         if whoseTurn == .computer {
             computerMove()
         }
