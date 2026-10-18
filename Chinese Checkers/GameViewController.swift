@@ -287,14 +287,16 @@ class GameViewController: UIViewController {
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
                 actions.append(contentsOf: [riseAction, lowerAction, waitAction])
             }
-            marbleNode?.runAction(SCNAction.sequence(actions)) {
-//                self.fadeOutMoveView()
-                self.checkProgress()
-//                self.spinner.stopAnimating()
-                self.whoseTurn.next()
-                Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
-                    print(self.board)
-                    print("Computer Sequence: \(bestMoveSequence)")
+            DispatchQueue.main.async {
+                marbleNode?.runAction(SCNAction.sequence(actions)) {
+//                    self.fadeOutMoveView()
+                    self.checkProgress()
+//                    self.spinner.stopAnimating()
+                    self.whoseTurn.next()
+                    Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
+                        print(self.board)
+                        print("Computer Sequence: \(bestMoveSequence)")
+                    }
                 }
             }
         }
