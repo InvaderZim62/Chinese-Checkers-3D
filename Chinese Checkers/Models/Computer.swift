@@ -1,8 +1,8 @@
 //
 //  Computer.swift
-//  ChineseCheckers2
+//  Chinese Checkers
 //
-//  Created by Phil Stern on 9/18/26.
+//  Created by Phil Stern on 10/11/26.
 //
 //  Best move is a recursive algorithm that determines the computer move giving best board
 //  position (score), assuming the human will move to minimize computer's advantage.  It uses

@@ -56,8 +56,7 @@ class Scene {
         cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float(Constant.cameraAngle), 1, 0, 0)
         let cameraDistance = Constant.nominalCameraDistance * (2 * Float(view.bounds.width) / 375.0 - 1)  // iPhone SE is 375 wide
         cameraNode.position = SCNVector3(0, cameraDistance * sin(Constant.cameraAngle), cameraDistance * cos(Constant.cameraAngle))
-        cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, Float(-0.02), 1, 0, 0)  // rotate camera a little more down, to move room up on screen
+        cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, Float(-0.06), 1, 0, 0)  // rotate camera a little more down, to move board up on screen
         scnScene.rootNode.addChildNode(cameraNode)
-//        scnView.allowsCameraControl = false
     }
 }

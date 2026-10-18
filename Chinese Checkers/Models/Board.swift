@@ -1,8 +1,8 @@
 //
 //  Board.swift
-//  ChineseCheckers2
+//  Chinese Checkers
 //
-//  Created by Phil Stern on 9/8/26.
+//  Created by Phil Stern on 10/11/26.
 //
 //  Board is the model.
 //

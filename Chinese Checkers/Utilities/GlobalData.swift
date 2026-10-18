@@ -1,8 +1,8 @@
 //
 //  HolePositions.swift
-//  ChineseCheckers2
+//  Chinese Checkers
 //
-//  Created by Phil Stern on 9/30/26.
+//  Created by Phil Stern on 10/11/26.
 //
 //  usage: let globalData = GlobalData.shared
 //
