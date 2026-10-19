@@ -48,7 +48,6 @@ class GameViewController: UIViewController {
     var turnIndicatorNode: MarbleNode!
     var selectedMarbleNode: MarbleNode!
     var isGameOver = false
-    var isRestartRequested = false
     var whoseTurn: Player! {
         didSet {
             turnIndicatorNode.player = whoseTurn
@@ -68,6 +67,11 @@ class GameViewController: UIViewController {
     var availableEndpoints = [RowCol]()
     var startRowCol = RowCol.zero
     var endRowCol = RowCol.zero
+    
+    // computer's move cancellation vars
+    var item: DispatchWorkItem!
+    var movingMarbleNode: MarbleNode!
+    var movingStartRowCol: RowCol!
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -257,14 +261,12 @@ class GameViewController: UIViewController {
     
     // reset game
     private func restartSelected() {
-        isRestartRequested = true
-        if whoseTurn == .human {
-            performRestart()
-        }  // else restartActions will be called in computerMove's completion handler
+        print("\nRestart")
+        if item != nil { cancelComputerMove() }
+        performRestart()
     }
     
     private func performRestart() {
-        isRestartRequested = false
         isGameOver = false
         hud.winner = nil
         turnIndicatorNode.isHidden = false
@@ -280,19 +282,32 @@ class GameViewController: UIViewController {
 
     // MARK: - Computer
     
+    // If restarting game during computer's move, need to stop move actions, and prevent executing
+    // of completion handler. DispatchWorkItem encapsulates a queue and can be cancelled.
+    
+    private func cancelComputerMove() {
+        item?.cancel()
+        movingMarbleNode.removeAllActions()  // stops moving marble in place
+        movingMarbleNode.position = globalData.holePositions[movingStartRowCol]!  // jump back, so moveAllMarblesBackToStartingPositions works
+//        fadeOutMoveView()
+//        spinner.stopAnimating()
+        whoseTurn.next()
+        item = nil
+    }
+
     private func computerMove() {
 //        spinner.startAnimating()
-        DispatchQueue.global(qos: .userInitiated).async {
-            //------------------------------------------------------------------------
-            let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
-            //------------------------------------------------------------------------
-            let marbleNode = self.getMarbleNodeAt(bestMoveSequence.first!.from)
+        item = DispatchWorkItem(qos: .userInitiated) { [weak self] in  // weak self needed to prevent potential reference cycle (memory leak)
+            //-------------------------------------------------------------------------------------
+            let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
+            //-------------------------------------------------------------------------------------
+            self?.movingStartRowCol = bestMoveSequence?.first?.from
+            self?.movingMarbleNode = self?.getMarbleNodeAt(self?.movingStartRowCol ?? RowCol.none)
             // build move actions
             var actions = [SCNAction]()
-            for move in bestMoveSequence {
-                self.board.updateMarbleLocationForMove(move)
-                let from = self.globalData.holePositions[move.from]
-                let to = self.globalData.holePositions[move.to]
+            for move in bestMoveSequence ?? [] {
+                let from = self?.globalData.holePositions[move.from]
+                let to = self?.globalData.holePositions[move.to]
                 let midPoint = (from! + to!) / 2 + Constant.moveHeight * 1.5
                 let riseAction = SCNAction.move(to: midPoint, duration: Constant.farMoveTime / 2)
                 let lowerAction = SCNAction.move(to: to!, duration: Constant.farMoveTime / 2)
@@ -300,21 +315,21 @@ class GameViewController: UIViewController {
                 actions.append(contentsOf: [riseAction, lowerAction, waitAction])
             }
             DispatchQueue.main.async {
-                marbleNode?.runAction(SCNAction.sequence(actions)) {
+                if self?.item?.isCancelled ?? true { self?.item = nil; return }
+                self?.movingMarbleNode?.runAction(SCNAction.sequence(actions)) {
+                    bestMoveSequence?.forEach { self?.board.updateMarbleLocationForMove($0) }
 //                    self.fadeOutMoveView()
-                    self.checkProgress()
+                    self?.checkProgress()
 //                    self.spinner.stopAnimating()
-                    if self.isRestartRequested {
-                        self.performRestart()
-                    } else {
-                        self.whoseTurn.next()
-                    }
+                    self?.whoseTurn.next()
                     Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
-                        print(self.board)
-                        print("Computer Sequence: \(bestMoveSequence)")
+                        print(self?.board ?? "")
+                        print("Computer Sequence: \(bestMoveSequence ?? [])")
                     }
+                    self?.item = nil
                 }
             }
         }
+        DispatchQueue.global(qos: .userInitiated).async(execute: item!)
     }
 }
