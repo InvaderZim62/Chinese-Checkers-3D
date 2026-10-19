@@ -48,6 +48,7 @@ class GameViewController: UIViewController {
     var turnIndicatorNode: MarbleNode!
     var selectedMarbleNode: MarbleNode!
     var isGameOver = false
+    var isRestartRequested = false
     var whoseTurn: Player! {
         didSet {
             turnIndicatorNode.player = whoseTurn
@@ -223,15 +224,6 @@ class GameViewController: UIViewController {
         return marbleNode
     }
     
-    // assumes a marbleNode is at fromRowCol
-    private func moveMarbleNode(from fromRowCol: RowCol, to toRowCol: RowCol) {
-        if let marbleNode = getMarbleNodeAt(fromRowCol) {
-            let toPosition = globalData.holePositions[toRowCol]!
-            let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
-            marbleNode.runAction(move)
-        }
-    }
-    
     private func moveAllMarblesBackToStartingPositions() {
         let fromRowCols = board.marbles.map { $0.rowCol }
         board.updateAllMarbleLocationsToStartingPositions()
@@ -239,6 +231,15 @@ class GameViewController: UIViewController {
         for (index, fromRowCol) in fromRowCols.enumerated() {
             let toRowCol = toRowCols[index]
             moveMarbleNode(from: fromRowCol, to: toRowCol)
+        }
+    }
+    
+    // assumes a marbleNode is at fromRowCol
+    private func moveMarbleNode(from fromRowCol: RowCol, to toRowCol: RowCol) {
+        if let marbleNode = getMarbleNodeAt(fromRowCol) {
+            let toPosition = globalData.holePositions[toRowCol]!
+            let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
+            marbleNode.runAction(move)
         }
     }
 
@@ -256,6 +257,14 @@ class GameViewController: UIViewController {
     
     // reset game
     private func restartSelected() {
+        isRestartRequested = true
+        if whoseTurn == .human {
+            performRestart()
+        }  // else restartActions will be called in computerMove's completion handler
+    }
+    
+    private func performRestart() {
+        isRestartRequested = false
         isGameOver = false
         hud.winner = nil
         turnIndicatorNode.isHidden = false
@@ -295,7 +304,11 @@ class GameViewController: UIViewController {
 //                    self.fadeOutMoveView()
                     self.checkProgress()
 //                    self.spinner.stopAnimating()
-                    self.whoseTurn.next()
+                    if self.isRestartRequested {
+                        self.performRestart()
+                    } else {
+                        self.whoseTurn.next()
+                    }
                     Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
                         print(self.board)
                         print("Computer Sequence: \(bestMoveSequence)")
