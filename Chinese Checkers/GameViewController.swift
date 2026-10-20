@@ -71,7 +71,6 @@ class GameViewController: UIViewController {
     // computer's move cancellation vars
     var item: DispatchWorkItem!
     var movingMarbleNode: MarbleNode!
-    var movingStartRowCol: RowCol!
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -228,22 +227,40 @@ class GameViewController: UIViewController {
         return marbleNode
     }
     
+    private func performRestart() {
+        isGameOver = false
+        hud.winner = nil
+        turnIndicatorNode.isHidden = false
+        moveAllMarblesBackToStartingPositions()
+        if whoseTurn == .computer {
+            computerMove()
+        }
+    }
+
     private func moveAllMarblesBackToStartingPositions() {
         let fromRowCols = board.marbles.map { $0.rowCol }
         board.updateAllMarbleLocationsToStartingPositions()
         let toRowCols = board.marbles.map { $0.rowCol }
         for (index, fromRowCol) in fromRowCols.enumerated() {
             let toRowCol = toRowCols[index]
-            moveMarbleNode(from: fromRowCol, to: toRowCol)
+            if !moveMarbleNode(from: fromRowCol, to: toRowCol) {
+                // no marble at fromRowCol (movingMarbleNode stuck between holes when actions cancelled during restart)
+                let toPosition = globalData.holePositions[toRowCol]!
+                let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
+                movingMarbleNode.runAction(move)
+            }
         }
     }
     
-    // assumes a marbleNode is at fromRowCol
-    private func moveMarbleNode(from fromRowCol: RowCol, to toRowCol: RowCol) {
+    // assumes a marbleNode is at fromRowCol, otherwise return false
+    private func moveMarbleNode(from fromRowCol: RowCol, to toRowCol: RowCol) -> Bool {
         if let marbleNode = getMarbleNodeAt(fromRowCol) {
             let toPosition = globalData.holePositions[toRowCol]!
             let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
             marbleNode.runAction(move)
+            return true
+        } else {
+            return false
         }
     }
 
@@ -266,16 +283,6 @@ class GameViewController: UIViewController {
         performRestart()
     }
     
-    private func performRestart() {
-        isGameOver = false
-        hud.winner = nil
-        turnIndicatorNode.isHidden = false
-        moveAllMarblesBackToStartingPositions()
-        if whoseTurn == .computer {
-            computerMove()
-        }
-    }
-    
     private func difficultySelected() {
         isHardPlay = hud.isHardPlay
     }
@@ -288,7 +295,6 @@ class GameViewController: UIViewController {
     private func cancelComputerMove() {
         item?.cancel()
         movingMarbleNode.removeAllActions()  // stops moving marble in place
-        movingMarbleNode.position = globalData.holePositions[movingStartRowCol]!  // jump back, so moveAllMarblesBackToStartingPositions works
 //        fadeOutMoveView()
 //        spinner.stopAnimating()
         whoseTurn.next()
@@ -301,8 +307,7 @@ class GameViewController: UIViewController {
             //-------------------------------------------------------------------------------------
             let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
             //-------------------------------------------------------------------------------------
-            self?.movingStartRowCol = bestMoveSequence?.first?.from
-            self?.movingMarbleNode = self?.getMarbleNodeAt(self?.movingStartRowCol ?? RowCol.none)
+            self?.movingMarbleNode = self?.getMarbleNodeAt(bestMoveSequence?.first?.from ?? RowCol.none)
             // build move actions
             var actions = [SCNAction]()
             for move in bestMoveSequence ?? [] {

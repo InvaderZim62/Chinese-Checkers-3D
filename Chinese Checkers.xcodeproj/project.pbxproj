@@ -229,6 +229,7 @@
 				DEVELOPMENT_TEAM = 65Z9KA7SHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Chinese Checkers/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Chinese Checkers";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -261,6 +262,7 @@
 				DEVELOPMENT_TEAM = 65Z9KA7SHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Chinese Checkers/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Chinese Checkers";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
