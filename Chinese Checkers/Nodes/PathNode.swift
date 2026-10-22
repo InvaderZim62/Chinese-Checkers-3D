@@ -21,7 +21,7 @@ class PathNode: SCNNode {
     
     let globalData = GlobalData.shared
     
-    func createPathThroughSequence(_ moveSequence: [Move], color: UIColor) {
+    func createPathThroughSequence(_ moveSequence: [Move], color: UIColor = .clear) {
         childNodes.forEach { $0.removeFromParentNode() }
         for move in moveSequence {
             let path = SCNTorus(ringRadius: move.distance / 2, pipeRadius: Constant.pathRadius)
@@ -31,7 +31,12 @@ class PathNode: SCNNode {
             pathNode.transform = SCNMatrix4Rotate(pathNode.transform, -move.bearing, 0, 0, 1)  // 0 deg along x-axis, 90 deg along z-axis
             pathNode.position = move.midPoint - SCNVector3(x: 0, y: 0.1, z: 0)
             addChildNode(pathNode)
+            opacity = 1
         }
+    }
+    
+    func clearSequencePath() {
+        createPathThroughSequence([])
     }
 
     override init() {

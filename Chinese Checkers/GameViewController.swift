@@ -7,9 +7,14 @@
 //  SceneKit axes
 //       y (height)
 //       |
-//       |___ x (width)
+//       |___ x (width)    note: game board is in x-z plane
 //      /
 //     z (length)
+//
+//  To do...
+//  - maybe add sinusoidal height bias to marble when panning (rather than Constant.moveHeight),
+//    so marble moves up from one hole and down to the next.  Might not look good dipping down
+//    into occupied holes.
 //
 
 import UIKit
@@ -30,7 +35,7 @@ struct Constant {
     static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
     static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble
-    static let lineFadeTime: TimeInterval = 0.5
+    static let pathFadeTime: TimeInterval = 0.5
 
     static let nominalCameraDistance: Float = 3.6
     static let cameraAngle: Float = 50 * .pi / 180  // angle above horizon
@@ -72,7 +77,7 @@ class GameViewController: UIViewController {
     
     // computer's move cancellation vars
     var item: DispatchWorkItem!
-    var movingMarbleNode: MarbleNode!
+    var computerMarbleNode: MarbleNode!
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -198,7 +203,7 @@ class GameViewController: UIViewController {
                     whoseTurn.next()
                 }
                 selectedMarbleNode = nil
-                fadeOutPath()
+                fadeOutPathNode()
             default:
                 break
             }
@@ -254,7 +259,7 @@ class GameViewController: UIViewController {
                 // no marble at fromRowCol (movingMarbleNode stuck between holes when actions cancelled during restart)
                 let toPosition = globalData.holePositions[toRowCol]!
                 let move = SCNAction.move(to: toPosition, duration: Constant.farMoveTime)
-                movingMarbleNode.runAction(move)
+                computerMarbleNode.runAction(move)
             }
         }
     }
@@ -281,8 +286,8 @@ class GameViewController: UIViewController {
         }
     }
     
-    private func fadeOutPath() {
-        pathNode.createPathThroughSequence([], color: UIColor.clear)
+    private func fadeOutPathNode() {
+        pathNode.runAction(SCNAction.fadeOut(duration: Constant.pathFadeTime))
     }
 
     // MARK: - Hud callbacks
@@ -305,8 +310,8 @@ class GameViewController: UIViewController {
     
     private func cancelComputerMove() {
         item?.cancel()
-        movingMarbleNode.removeAllActions()  // stops moving marble in place
-        fadeOutPath()
+        computerMarbleNode.removeAllActions()  // stops moving marble in place
+        fadeOutPathNode()
 //        spinner.stopAnimating()
         whoseTurn.next()
         item = nil
@@ -318,8 +323,6 @@ class GameViewController: UIViewController {
             //-------------------------------------------------------------------------------------
             let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
             //-------------------------------------------------------------------------------------
-            self?.pathNode.createPathThroughSequence(bestMoveSequence ?? [], color: Constant.computerColor)
-            self?.movingMarbleNode = self?.getMarbleNodeAt(bestMoveSequence?.first?.from ?? RowCol.none)
             // build move actions
             var actions = [SCNAction]()
             for move in bestMoveSequence ?? [] {
@@ -329,11 +332,13 @@ class GameViewController: UIViewController {
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
                 actions.append(contentsOf: [riseAction, lowerAction, waitAction])
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Constant.pathFadeTime) {  // allow time for human's fadeOutPathNode to complete
                 if self?.item?.isCancelled ?? true { self?.item = nil; return }
-                self?.movingMarbleNode?.runAction(SCNAction.sequence(actions)) {
+                self?.pathNode.createPathThroughSequence(bestMoveSequence ?? [], color: Constant.computerColor)
+                self?.computerMarbleNode = self?.getMarbleNodeAt(bestMoveSequence?.first?.from ?? RowCol.none)
+                self?.computerMarbleNode?.runAction(SCNAction.sequence(actions)) {
                     bestMoveSequence?.forEach { self?.board.updateMarbleLocationForMove($0) }
-                    self?.fadeOutPath()
+                    self?.fadeOutPathNode()
                     self?.checkProgress()
 //                    self.spinner.stopAnimating()
                     self?.whoseTurn.next()
