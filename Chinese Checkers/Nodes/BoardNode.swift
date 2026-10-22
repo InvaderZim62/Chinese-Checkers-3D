@@ -20,7 +20,7 @@ class BoardNode: SCNNode {
         
         geometry = boardNode.geometry
         
-        physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+//        physicsBody = SCNPhysicsBody(type: .static, shape: nil)
     }
     
     required init?(coder: NSCoder) {

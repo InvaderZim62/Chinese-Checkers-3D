@@ -65,7 +65,7 @@ nonisolated struct Move: Equatable, CustomStringConvertible {
     }
 
     // only good for two-position moves
-    var midpoint: RowCol {
+    var jumpPoint: RowCol {
         RowCol(row: Int(Double(from.row + to.row) / 2),
                col: Int(Double(from.col + to.col) / 2))
     }

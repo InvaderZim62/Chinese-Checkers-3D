@@ -25,7 +25,8 @@ struct Constant {
     static let snapDistance: CGFloat = 0.10
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
-    static let moveHeight = SCNVector3(x: 0, y: Float(marbleRadius), z: 0)
+    static let moveHeight = SCNVector3(x: 0, y: Float(marbleRadius), z: 0)  // while panning
+    static let pathWidth: CGFloat = 0.05
     static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
     static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble
@@ -45,6 +46,7 @@ class GameViewController: UIViewController {
     var board = Board()
     var computer = Computer()
     var marbleNodes = [MarbleNode]()
+    let pathNode = PathNode()
     var turnIndicatorNode: MarbleNode!
     var selectedMarbleNode: MarbleNode!
     var isGameOver = false
@@ -99,6 +101,7 @@ class GameViewController: UIViewController {
 
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
+        scene.scnScene.rootNode.addChildNode(pathNode)
     }
     
     override func viewDidLayoutSubviews() {
@@ -171,6 +174,8 @@ class GameViewController: UIViewController {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleNode.position = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
+                    let moveSequence = board.shortestSequence(from: startRowCol, to: endRowCol, forPlayer: .human)
+                    pathNode.createPathThroughSequence(moveSequence, color: Constant.humanColor)
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
                     pannedMarbleNode.position = boardCoordinates + Constant.moveHeight
@@ -192,6 +197,7 @@ class GameViewController: UIViewController {
                     whoseTurn.next()
                 }
                 selectedMarbleNode = nil
+                fadeOutPath()
             default:
                 break
             }
@@ -273,6 +279,10 @@ class GameViewController: UIViewController {
             hud.winner = nil
         }
     }
+    
+    private func fadeOutPath() {
+        pathNode.createPathThroughSequence([], color: UIColor.clear)
+    }
 
     // MARK: - Hud callbacks
     
@@ -295,7 +305,7 @@ class GameViewController: UIViewController {
     private func cancelComputerMove() {
         item?.cancel()
         movingMarbleNode.removeAllActions()  // stops moving marble in place
-//        fadeOutMoveView()
+        fadeOutPath()
 //        spinner.stopAnimating()
         whoseTurn.next()
         item = nil
@@ -307,14 +317,13 @@ class GameViewController: UIViewController {
             //-------------------------------------------------------------------------------------
             let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
             //-------------------------------------------------------------------------------------
+            self?.pathNode.createPathThroughSequence(bestMoveSequence ?? [], color: Constant.computerColor)
             self?.movingMarbleNode = self?.getMarbleNodeAt(bestMoveSequence?.first?.from ?? RowCol.none)
             // build move actions
             var actions = [SCNAction]()
             for move in bestMoveSequence ?? [] {
-                let from = self?.globalData.holePositions[move.from]
                 let to = self?.globalData.holePositions[move.to]
-                let midPoint = (from! + to!) / 2 + Constant.moveHeight * 1.5
-                let riseAction = SCNAction.move(to: midPoint, duration: Constant.farMoveTime / 2)
+                let riseAction = SCNAction.move(to: move.midPoint + Constant.moveHeight * 1.5, duration: Constant.farMoveTime / 2)
                 let lowerAction = SCNAction.move(to: to!, duration: Constant.farMoveTime / 2)
                 let waitAction = SCNAction.wait(duration: Constant.farMoveTime)
                 actions.append(contentsOf: [riseAction, lowerAction, waitAction])
@@ -323,7 +332,7 @@ class GameViewController: UIViewController {
                 if self?.item?.isCancelled ?? true { self?.item = nil; return }
                 self?.movingMarbleNode?.runAction(SCNAction.sequence(actions)) {
                     bestMoveSequence?.forEach { self?.board.updateMarbleLocationForMove($0) }
-//                    self.fadeOutMoveView()
+                    self?.fadeOutPath()
                     self?.checkProgress()
 //                    self.spinner.stopAnimating()
                     self?.whoseTurn.next()
@@ -336,5 +345,28 @@ class GameViewController: UIViewController {
             }
         }
         DispatchQueue.global(qos: .userInitiated).async(execute: item!)
+    }
+}
+
+extension Move {
+    var midPoint: SCNVector3 {
+        let globalData = GlobalData.shared
+        let from = globalData.holePositions[from]
+        let to = globalData.holePositions[to]
+        return (from! + to!) / 2
+    }
+    
+    var distance: Double {
+        let globalData = GlobalData.shared
+        let from = globalData.holePositions[from]
+        let to = globalData.holePositions[to]
+        return from!.distance(to: to!)
+    }
+    
+    var bearing: Float {
+        let globalData = GlobalData.shared
+        let from = globalData.holePositions[from]
+        let to = globalData.holePositions[to]
+        return from!.bearing(to: to!)
     }
 }

@@ -148,7 +148,7 @@ struct Board: CustomStringConvertible {
         guard isOnBoard(move.to) else { return false }
         guard !isOccupied(move.to) else { return false }
         guard !isHome(move.from, forPlayer: player) || isHome(move.to, forPlayer: player) else { return false }
-        let isJump = move.isTwoPosition && isOccupied(move.midpoint)
+        let isJump = move.isTwoPosition && isOccupied(move.jumpPoint)
         return move.isOnePosition || isJump
     }
 

@@ -40,7 +40,7 @@ class MarbleNode: SCNNode {
         geometry = SCNSphere(radius: radius)
         geometry?.firstMaterial?.diffuse.contents = color
 
-        physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+//        physicsBody = SCNPhysicsBody(type: .static, shape: nil)
     }
     
     required init?(coder: NSCoder) {
