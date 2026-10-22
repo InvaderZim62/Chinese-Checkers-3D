@@ -22,7 +22,7 @@ struct Constant {
     static let boardSize = 7
     static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 0.08
-    static let snapDistance: CGFloat = 0.10
+    static let snapDistance: CGFloat = 0.12
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
     static let moveHeight = SCNVector3(x: 0, y: Float(1.5 * marbleRadius), z: 0)  // while panning
@@ -159,7 +159,8 @@ class GameViewController: UIViewController {
     // move selected marble along pan gesture; snap marble to legal move holes
     @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         let location = recognizer.location(in: scene.scnView)  // absolute 2D screen coordinates
-        guard let boardCoordinates = getBoardCoordinatesAt(location) else { return }
+        guard var boardCoordinates = getBoardCoordinatesAt(location) else { return }
+        boardCoordinates += SCNVector3(x: 0, y: 0, z: 0.05 * boardCoordinates.z - 0.225)  // offset marble to see around finger
         
         if let pannedMarbleNode = selectedMarbleNode {
             switch recognizer.state {

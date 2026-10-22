@@ -26,6 +26,11 @@ extension CGPoint {
         CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
     
+    // usage: CGPoint(x: 1, y: 2) += CGPoint(x: 3, y: 4)  // = CGPoint(x: 4, y: 6)
+    static func +=(lhs: inout CGPoint, rhs: CGPoint) {
+        lhs = lhs + rhs
+    }
+
     // usage: 3 * CGPoint(x: 1, y: 2)  // = CGPoint(x: 3, y: 6)
     static func *(lhs: Double, rhs: CGPoint) -> CGPoint {
         CGPoint(x: lhs * rhs.x, y: lhs * rhs.y)
@@ -61,6 +66,10 @@ extension SCNVector3 {
     
     static func -(lhs: SCNVector3, rhs: SCNVector3) -> SCNVector3 {
         return SCNVector3(x: lhs.x - rhs.x, y: lhs.y - rhs.y, z: lhs.z - rhs.z)
+    }
+    
+    static func +=(lhs: inout SCNVector3, rhs: SCNVector3) {
+        lhs = lhs + rhs
     }
     
     static func *(lhs: SCNVector3, scaler: Float) -> SCNVector3 {
