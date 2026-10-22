@@ -15,50 +15,6 @@ extension Array where Element: Equatable {
     }
 }
 
-extension CGPoint {
-    // usage: CGPoint(x: 1, y: 2) + CGPoint(x: 3, y: 4)  // = CGPoint(x: 4, y: 6)
-    static func +(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-    }
-    
-    // usage: CGPoint(x: 1, y: 2) - CGPoint(x: 3, y: 4)  // = CGPoint(x: -2, y: -2)
-    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
-    }
-    
-    // usage: CGPoint(x: 1, y: 2) += CGPoint(x: 3, y: 4)  // = CGPoint(x: 4, y: 6)
-    static func +=(lhs: inout CGPoint, rhs: CGPoint) {
-        lhs = lhs + rhs
-    }
-
-    // usage: 3 * CGPoint(x: 1, y: 2)  // = CGPoint(x: 3, y: 6)
-    static func *(lhs: Double, rhs: CGPoint) -> CGPoint {
-        CGPoint(x: lhs * rhs.x, y: lhs * rhs.y)
-    }
-
-    // usage: CGPoint(x: 3, y: 4)  // = 5
-    var magnitude: Double {
-        sqrt(x * x + y * y)
-    }
-    
-    // usage: CGPoint(x: 0, y: 0).distance(to: CGPoint(x: 3, y: 4))  // = 5
-    func distance(to point: CGPoint) -> Double {
-        sqrt(pow((self.x - point.x), 2) + pow((self.y - point.y), 2))
-    }
-    
-    // return bearing from -pi to +pi, where 0 is to the right, positive is clockwise
-    func bearing(to point: CGPoint) -> Double {
-        atan2(Double(point.y - self.y), Double(point.x - self.x))
-    }
-    
-    func limitedToCircle(withRadius radius: CGFloat, centeredAt center: CGPoint) -> CGPoint {
-        let angle = center.bearing(to: self)
-        let limitedRadius = min(radius, distance(to: center))
-        let limitedPoint = center + limitedRadius * CGPoint(x: cos(angle), y: sin(angle))
-        return limitedPoint
-    }
-}
-
 extension SCNVector3 {
     static func +(lhs: SCNVector3, rhs: SCNVector3) -> SCNVector3 {
         return SCNVector3(x: lhs.x + rhs.x, y: lhs.y + rhs.y, z: lhs.z + rhs.z)
@@ -103,12 +59,6 @@ extension SCNVector3 {
     
     var magnitude: Float {
         return sqrt(x * x + y * y + z * z)
-    }
-}
-
-extension SCNVector3: @retroactive Equatable {
-    public static func == (lhs: SCNVector3, rhs: SCNVector3) -> Bool {
-        lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
     }
 }
 
