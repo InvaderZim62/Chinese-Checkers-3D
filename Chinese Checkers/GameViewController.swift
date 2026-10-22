@@ -79,6 +79,8 @@ class GameViewController: UIViewController {
     var item: DispatchWorkItem!
     var computerMarbleNode: MarbleNode!
 
+    var spinner = UIActivityIndicatorView(style: .large)
+
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -107,6 +109,9 @@ class GameViewController: UIViewController {
         let boardNode = BoardNode()
         scene.scnScene.rootNode.addChildNode(boardNode)
         scene.scnScene.rootNode.addChildNode(pathNode)
+        
+        spinner.center = scene.scnView.center
+        scene.scnView.addSubview(spinner)
     }
     
     override func viewDidLayoutSubviews() {
@@ -312,13 +317,13 @@ class GameViewController: UIViewController {
         item?.cancel()
         computerMarbleNode.removeAllActions()  // stops moving marble in place
         fadeOutPathNode()
-//        spinner.stopAnimating()
+        spinner.stopAnimating()
         whoseTurn.next()
         item = nil
     }
 
     private func computerMove() {
-//        spinner.startAnimating()
+        spinner.startAnimating()
         item = DispatchWorkItem(qos: .userInitiated) { [weak self] in  // weak self needed to prevent potential reference cycle (memory leak)
             //-------------------------------------------------------------------------------------
             let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
@@ -333,14 +338,16 @@ class GameViewController: UIViewController {
                 actions.append(contentsOf: [riseAction, lowerAction, waitAction])
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + Constant.pathFadeTime) {  // allow time for human's fadeOutPathNode to complete
+                self?.spinner.stopAnimating()
                 if self?.item?.isCancelled ?? true { self?.item = nil; return }
                 self?.pathNode.createPathThroughSequence(bestMoveSequence ?? [], color: Constant.computerColor)
                 self?.computerMarbleNode = self?.getMarbleNodeAt(bestMoveSequence?.first?.from ?? RowCol.none)
+                
+                // animate computer's move
                 self?.computerMarbleNode?.runAction(SCNAction.sequence(actions)) {
-                    bestMoveSequence?.forEach { self?.board.updateMarbleLocationForMove($0) }
+                    bestMoveSequence?.forEach { self?.board.updateMarbleLocationForMove($0) }  // update model
                     self?.fadeOutPathNode()
                     self?.checkProgress()
-//                    self.spinner.stopAnimating()
                     self?.whoseTurn.next()
                     Task { @MainActor in  // @MainActor needed here to use board's CustomStringConvertible
                         print(self?.board ?? "")
