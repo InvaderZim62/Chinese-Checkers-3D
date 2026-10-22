@@ -26,7 +26,7 @@ struct Constant {
     static let holeSpacing: Float = 0.254  // found empirically to match Blender model
     static let marbleHeight: Float = 0.09  // when on board
     static let moveHeight = SCNVector3(x: 0, y: Float(marbleRadius), z: 0)  // while panning
-    static let pathWidth: CGFloat = 0.05
+    static let pathRadius: CGFloat = 0.02
     static let farMoveTime: TimeInterval = 0.5  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.3  // used to return marble, if unmoved
     static let upDownTime: TimeInterval = 0.1  // lifting and lowering marble

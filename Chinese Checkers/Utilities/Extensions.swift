@@ -85,7 +85,7 @@ extension SCNVector3 {
     
     // return bearing in x-z plane from -pi to +pi, where 0 is to the right, positive is clockwise
     func bearing(to point: SCNVector3) -> Float {
-        -atan2(Float(point.z - self.z), Float(point.x - self.x))
+        atan2(Float(point.z - self.z), Float(point.x - self.x))
     }
 
     func dot(_ rhs: SCNVector3) -> Float {
