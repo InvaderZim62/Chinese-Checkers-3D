@@ -7,14 +7,9 @@
 //  SceneKit axes
 //       y (height)
 //       |
-//       |___ x (width)    note: game board is in x-z plane
+//       |___ x (width)    Note: Game board is in x-z plane
 //      /
 //     z (length)
-//
-//  To do...
-//  - maybe add sinusoidal height bias to marble when panning (rather than Constant.moveHeight),
-//    so marble moves up from one hole and down to the next.  Might not look good dipping down
-//    into occupied holes.
 //
 
 import UIKit
