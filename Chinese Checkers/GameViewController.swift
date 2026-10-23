@@ -39,7 +39,7 @@ struct Constant {
 
     static let nominalCameraDistance: Float = 3.6
     static let cameraAngle: Float = 50 * .pi / 180  // angle above horizon
-    static let isOrthographicProjection = false  // false: marble size decreases with distance from camera
+    static let isOrthographicProjection = true  // false: marble size decreases with distance from camera
 }
 
 class GameViewController: UIViewController {
@@ -148,7 +148,11 @@ class GameViewController: UIViewController {
     
     private func createTurnIndicatorNode() {
         turnIndicatorNode = MarbleNode(radius: Constant.marbleRadius)
-        turnIndicatorNode.position = SCNVector3(x: -0.95, y: 0, z: -1.25)
+        if Constant.isOrthographicProjection {
+            turnIndicatorNode.position = SCNVector3(x: -0.8, y: 0, z: -1.3)
+        } else {
+            turnIndicatorNode.position = SCNVector3(x: -0.95, y: 0, z: -1.25)
+        }
         scene.scnScene.rootNode.addChildNode(turnIndicatorNode)
     }
 
