@@ -6,4 +6,4 @@ computer.  Look on line for the rules.
 
 <img width="250" height="510" alt="Chinese checkers 3D" src="https://github.com/user-attachments/assets/f1f84350-b3ed-4a51-9067-4d1b5f22e2f7" />
 
-I also created a [2D version](https://github.com/InvaderZim62/ChineseCheckers2).
+<p>I also created a [2D version](https://github.com/InvaderZim62/ChineseCheckers2).
