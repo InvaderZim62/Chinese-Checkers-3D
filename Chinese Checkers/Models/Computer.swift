@@ -38,8 +38,8 @@ class Computer {
     let globalData = GlobalData.shared
 
     func bestMoveSequenceOn(board: Board) -> [Move] {
-        // note: best move may be the end point of a jump sequence
-        var bestMove = Move(from: RowCol.zero, to: RowCol.zero)
+        // note: best move may be from current position to end point of a jump sequence
+        var bestMove = Move()
         //---------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove)
         //---------------------------------------------------------------------------------------

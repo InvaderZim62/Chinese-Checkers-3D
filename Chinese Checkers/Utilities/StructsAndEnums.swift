@@ -55,6 +55,16 @@ struct Marble {
 nonisolated struct Move: Equatable, CustomStringConvertible {
     let from: RowCol
     let to: RowCol
+    
+    init() {
+        from = .zero
+        to = .zero
+    }
+    
+    init(from: RowCol, to: RowCol) {
+        self.from = from
+        self.to = to
+    }
 
     var isOnePosition: Bool {
         abs(from.distanceTo(to)) == 1
